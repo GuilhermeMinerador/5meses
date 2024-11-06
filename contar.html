@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contador com Animações</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    .counter {
+      text-align: start;
+      padding: 20px;
+      background-color: #333;
+      color: white;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .counter h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <audio id="musica" loop>
+    <source src="audio.mp3" type="audio/mpeg">
+    Seu navegador não suporta o elemento de áudio.
+</audio>
+
+<button onclick="tocarMusica()">Iniciar Música</button>
+
+<script>
+    function tocarMusica() {
+        const musica = document.getElementById("musica");
+        musica.play();
+    }
+</script>
+
+
+  <div class="counter">
+    <h1>Contador com Animações</h1>
+    <p id="month-count" class="number">Meses: Calculando...</p>
+    <p id="week-count" class="number">Semanas: Calculando...</p>
+    <p id="day-count" class="number">Dias: Calculando...</p>
+    <p id="hour-count" class="number">Horas: Calculando...</p>
+    <p id="minute-count" class="number">Minutos: Calculando...</p>
+    <p id="second-count" class="number">Segundos: Calculando...</p>
+  </div>
+
+  <script>
+    let lastValues = {
+      days: 0,
+      weeks: 0,
+      months: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0
+    };
+
+    function updateCounters() {
+      const startDate = new Date("2024-06-07"); // Data de início da contagem
+      const currentDate = new Date();           // Data atual
+      const timeDifference = currentDate - startDate; // Diferença em milissegundos
+
+      // Calcula os valores
+      const daysPassed = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); 
+      const weeksPassed = Math.floor(daysPassed / 7); 
+      const monthsPassed = Math.floor(daysPassed / 30.44); // Média de 30.44 dias por mês
+      const hoursPassed = Math.floor(timeDifference / (1000 * 60 * 60));
+      const minutesPassed = Math.floor(timeDifference / (1000 * 60));
+      const secondsPassed = Math.floor(timeDifference / 1000);
+
+      // Atualiza os contadores com animação se houver mudança
+      updateCounter('day-count', `Dias: ${daysPassed}`, lastValues.days);
+      updateCounter('week-count', `Semanas: ${weeksPassed}`, lastValues.weeks);
+      updateCounter('month-count', `Meses: ${monthsPassed}`, lastValues.months);
+      updateCounter('hour-count', `Horas: ${hoursPassed}`, lastValues.hours);
+      updateCounter('minute-count', `Minutos: ${minutesPassed}`, lastValues.minutes);
+      updateCounter('second-count', `Segundos: ${secondsPassed}`, lastValues.seconds);
+
+      // Atualiza os últimos valores
+      lastValues.days = daysPassed;
+      lastValues.weeks = weeksPassed;
+      lastValues.months = monthsPassed;
+      lastValues.hours = hoursPassed;
+      lastValues.minutes = minutesPassed;
+      lastValues.seconds = secondsPassed;
+    }
+
+    function updateCounter(elementId, newText, lastValue) {
+      const element = document.getElementById(elementId);
+
+      // Se o valor novo for diferente do valor anterior, aplica animação
+      if (newText !== element.textContent) {
+        element.classList.add('fade-out');
+
+        // Aguarda a animação de saída para mudar o texto
+        setTimeout(() => {
+          element.textContent = newText;
+          element.classList.remove('fade-out');
+          element.classList.add('fade-in');
+        }, 500); // O tempo deve coincidir com a duração da animação de saída
+
+        // Remove a classe de fade-in após a animação
+        setTimeout(() => {
+          element.classList.remove('fade-in');
+        }, 1000); // Tempo para remover a classe após a animação
+      }
+    }
+
+    // Atualiza os contadores ao carregar a página
+    updateCounters();
+
+    // Atualiza o contador a cada segundo
+    setInterval(updateCounters, 1000); // Atualiza a cada segundo
+  </script>
+</body>
+</html>
